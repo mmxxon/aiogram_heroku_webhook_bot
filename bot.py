@@ -23,6 +23,11 @@ dp = Dispatcher(bot)
 dp.middleware.setup(LoggingMiddleware())
 
 
+@dp.message_handler(commands='start')
+async def start_handler(message: types.Message):
+    await bot.send_message(message.chat.id, text='hi')
+
+
 @dp.message_handler()
 async def echo(message: types.Message):
     # Regular request
