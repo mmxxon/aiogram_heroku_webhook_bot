@@ -5,7 +5,6 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.utils.executor import start_webhook
-from aiogram.dispatcher.webhook import get_new_configured_app
 
 PROJECT_NAME = os.environ["PROJ"]
 TOKEN = os.environ["TOKEN"]
@@ -28,15 +27,19 @@ async def start_handler(message: types.Message):
     await bot.send_message(message.chat.id, text="hi")
 
 
-async def on_startup(app):
+async def on_startup():
+    """
+    Runs some code after startup
+    """
     await bot.delete_webhook()
     await bot.set_webhook(WEBHOOK_URL)
 
 
-async def on_shutdown(dp):
+async def on_shutdown():
+    """
+    Runs some code before shutdown
+    """
     logging.warning("Shutting down..")
-
-    # insert code here to run it before shutdown
 
     # Remove webhook (not acceptable in some cases)
     await bot.delete_webhook()
