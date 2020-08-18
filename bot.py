@@ -3,8 +3,8 @@ import logging
 
 from aiogram import Bot, Dispatcher, types, executor
 
-PROJECT_NAME = os.environ["PROJ"]
-TOKEN = os.environ["TOKEN"]
+PROJECT_NAME = os.environ.get("PROJ")
+TOKEN = os.environ.get("TOKEN")
 
 WEBHOOK_HOST = f"https://{PROJECT_NAME}.herokuapp.com"
 WEBHOOK_PATH = "/webhook/" + TOKEN
@@ -17,6 +17,7 @@ bot = Bot(TOKEN)
 dp = Dispatcher(bot)
 
 logging.basicConfig(level=logging.INFO)
+
 
 # Example handler
 @dp.message_handler(commands="start")
