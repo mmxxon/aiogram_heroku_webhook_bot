@@ -1,10 +1,7 @@
 import os
 import logging
 
-from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher
-from aiogram.utils import executor
-from aiogram.utils.executor import start_webhook
+from aiogram import Bot, Dispatcher, types, executor
 
 PROJECT_NAME = os.environ["PROJ"]
 TOKEN = os.environ["TOKEN"]
@@ -21,46 +18,37 @@ dp = Dispatcher(bot)
 
 logging.basicConfig(level=logging.INFO)
 
-
-@dp.message_handler(commands='start')
+# Example handler
+@dp.message_handler(commands="start")
 async def start_handler(message: types.Message):
     await bot.send_message(message.chat.id, text="hi")
 
 
+# Run after startup
 async def on_startup():
-    """
-    Runs some code after startup
-    """
     await bot.delete_webhook()
     await bot.set_webhook(WEBHOOK_URL)
 
 
+# Run before shutdown
 async def on_shutdown():
-    """
-    Runs some code before shutdown
-    """
     logging.warning("Shutting down..")
-
-    # Remove webhook (not acceptable in some cases)
     await bot.delete_webhook()
-
-    # Close DB connection (if used)
     await dp.storage.close()
     await dp.storage.wait_closed()
-
-    logging.warning("Bye!")
+    logging.warning("Bot down")
 
 
 if __name__ == "__main__":
     if "HEROKU" in list(os.environ.keys()):
-        start_webhook(
+        executor.start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             on_startup=on_startup,
             on_shutdown=on_shutdown,
             skip_updates=True,
             host=WEBAPP_HOST,
-            port=WEBAPP_PORT
+            port=WEBAPP_PORT,
         )
     else:
         executor.start_polling(dp)
